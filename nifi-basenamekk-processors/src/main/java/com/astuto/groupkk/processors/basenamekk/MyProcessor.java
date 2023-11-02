@@ -64,6 +64,15 @@ public class MyProcessor extends AbstractProcessor {
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
 
+    public static final PropertyDescriptor USER_INPUT = new PropertyDescriptor
+            .Builder().name("USER_INPUT")
+            .displayName("User Input")
+            .description("User Input")
+            .required(true)
+//            .sensitive(true) // this will make sure you can mark the property as sensitive.
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
     public static final Relationship SUCCESS = new Relationship.Builder()
             .name("SUCCESS")
             .description("Example relationship")
@@ -76,10 +85,15 @@ public class MyProcessor extends AbstractProcessor {
     @Override
     protected void init(final ProcessorInitializationContext context) {
         descriptors = new ArrayList<>();
+
+        // Add your descriptors here.
         descriptors.add(AWS_CREDENTIALS_PROVIDER);
+        descriptors.add(USER_INPUT);
         descriptors = Collections.unmodifiableList(descriptors);
 
         relationships = new HashSet<>();
+
+        // Add your relations here.
         relationships.add(SUCCESS);
         relationships = Collections.unmodifiableSet(relationships);
     }
@@ -96,9 +110,7 @@ public class MyProcessor extends AbstractProcessor {
 
     @OnScheduled
     public void onScheduled(final ProcessContext context) {
-
-
-
+        // You can write a code which will be invoked based on the frequency.
     }
 
     @Override
@@ -107,7 +119,17 @@ public class MyProcessor extends AbstractProcessor {
         if (flowFile == null) {
             return;
         }
-        // TODO implement
+
+        // You can read params here based on your need. Like this.
+
+
+        // You can read the specified params here like this
+        String userInput = context.getProperty("USER_INPUT").getValue();
+
+        // To log anything use this logger
+        // Do not forget to add this in logger file. Otherwise, you won't see logs.
+        getLogger().debug("Some debug log here for the process. " + userInput);
+
         // Retrieve the AWS credentials provider controller service
         AWSCredentialsProviderService credentialsService = context.getProperty(AWS_CREDENTIALS_PROVIDER)
                 .asControllerService(AWSCredentialsProviderService.class);
@@ -124,19 +146,24 @@ public class MyProcessor extends AbstractProcessor {
         DescribeVolumesResponse response = ec2Client.describeVolumes(request);
 
         List<Volume> volumes = response.volumes();
-        HashSet<String> volumeIds = new HashSet<>();
 
         for (Volume v:
              volumes) {
-            volumeIds.add(v.volumeId());
+
+            // Create a new session
+            FlowFile newFlowFile = session.create();
+
+            // Write to the session
+            newFlowFile = session.write(newFlowFile, out -> {
+                out.write(v.volumeId().getBytes(StandardCharsets.UTF_8));
+            });
+
+            // Send the session.
+            session.transfer(newFlowFile, SUCCESS);
         }
 
-        String res = String.join(",", volumeIds);
-
-        flowFile = session.write(flowFile, out -> {
-            out.write(res.getBytes(StandardCharsets.UTF_8));
-        });
-
+        // You can send original in main flow file in case you need it.
+        // You can define other relations here for your use cases.
         session.transfer(flowFile, SUCCESS);
     }
 }
