@@ -17,6 +17,8 @@
 package com.astuto.groupkk.processors.basenamekk;
 
 import org.apache.nifi.components.PropertyDescriptor;
+import org.apache.nifi.components.state.Scope;
+import org.apache.nifi.components.state.StateMap;
 import org.apache.nifi.flowfile.FlowFile;
 import org.apache.nifi.annotation.behavior.ReadsAttribute;
 import org.apache.nifi.annotation.behavior.ReadsAttributes;
@@ -42,12 +44,10 @@ import software.amazon.awssdk.services.ec2.model.DescribeVolumesResponse;
 import software.amazon.awssdk.services.ec2.model.Volume;
 import software.amazon.awssdk.regions.Region;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.Instant;
+import java.util.*;
 
 @Tags({"example", "some","tags","nifi","custom","processor"})
 @CapabilityDescription("A custom processor to experiment with the controllers. How to access that. ")
@@ -121,6 +121,25 @@ public class MyProcessor extends AbstractProcessor {
         }
 
         // You can read params here based on your need. Like this.
+        try {
+            StateMap stateMap = context.getStateManager().getState(Scope.CLUSTER);
+            String lastUpdatedOn = stateMap.get("name");
+            String current = stateMap.get("current");
+
+            getLogger().debug("Found last logger data " + lastUpdatedOn + " current "+ current);
+        } catch (IOException e) {
+            getLogger().error("Error while getting state "+ e.getMessage());
+        }
+
+        Map<String, String> state = new HashMap<>();
+        state.put("name","kaushik");
+        state.put("current", Instant.now().toString());
+
+        try {
+            context.getStateManager().setState(state, Scope.CLUSTER);
+        } catch (IOException e) {
+
+        }
 
 
         // You can read the specified params here like this
