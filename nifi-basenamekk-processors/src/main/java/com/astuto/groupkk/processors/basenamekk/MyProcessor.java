@@ -24,7 +24,7 @@ import org.apache.nifi.annotation.behavior.ReadsAttribute;
 import org.apache.nifi.annotation.behavior.ReadsAttributes;
 import org.apache.nifi.annotation.behavior.WritesAttribute;
 import org.apache.nifi.annotation.behavior.WritesAttributes;
-import org.apache.nifi.annotation.lifecycle.OnScheduled;
+//import org.apache.nifi.annotation.lifecycle.OnScheduled;
 import org.apache.nifi.annotation.documentation.CapabilityDescription;
 import org.apache.nifi.annotation.documentation.SeeAlso;
 import org.apache.nifi.annotation.documentation.Tags;
@@ -51,9 +51,9 @@ import java.util.*;
 
 @Tags({"example", "some","tags","nifi","custom","processor"})
 @CapabilityDescription("A custom processor to experiment with the controllers. How to access that. ")
-@SeeAlso({})
-@ReadsAttributes({@ReadsAttribute(attribute="", description="")})
-@WritesAttributes({@WritesAttribute(attribute="", description="")})
+@SeeAlso()
+@ReadsAttributes({@ReadsAttribute(attribute="")})
+@WritesAttributes({@WritesAttribute(attribute="")})
 public class MyProcessor extends AbstractProcessor {
 
     public static final PropertyDescriptor AWS_CREDENTIALS_PROVIDER = new PropertyDescriptor.Builder()
@@ -108,11 +108,6 @@ public class MyProcessor extends AbstractProcessor {
         return descriptors;
     }
 
-    @OnScheduled
-    public void onScheduled(final ProcessContext context) {
-        // You can write a code which will be invoked based on the frequency.
-    }
-
     @Override
     public void onTrigger(final ProcessContext context, final ProcessSession session) {
         FlowFile flowFile = session.get();
@@ -132,13 +127,13 @@ public class MyProcessor extends AbstractProcessor {
         }
 
         Map<String, String> state = new HashMap<>();
-        state.put("name","kaushik");
+        state.put("name","some value will be passed here");
         state.put("current", Instant.now().toString());
 
         try {
             context.getStateManager().setState(state, Scope.CLUSTER);
         } catch (IOException e) {
-
+            getLogger().error("Error while setting state " + e.getMessage());
         }
 
 
@@ -173,9 +168,7 @@ public class MyProcessor extends AbstractProcessor {
             FlowFile newFlowFile = session.create();
 
             // Write to the session
-            newFlowFile = session.write(newFlowFile, out -> {
-                out.write(v.volumeId().getBytes(StandardCharsets.UTF_8));
-            });
+            newFlowFile = session.write(newFlowFile, out -> out.write(v.volumeId().getBytes(StandardCharsets.UTF_8)));
 
             // Send the session.
             session.transfer(newFlowFile, SUCCESS);
