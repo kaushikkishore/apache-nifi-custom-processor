@@ -1,0 +1,78 @@
+# Java Build Tools
+target/
+bin/
+.idea/
+
+# Compiled class files
+*.class
+
+# Log and report files
+*.log
+*.logs
+*.iml
+
+# Eclipse-specific files
+.settings/
+.project
+.classpath
+
+# Maven-specific files
+*.log
+log/
+logs/
+release.properties
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+
+# Gradle-specific files
+.gradle/
+build/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Compiled bytecode
+*.class
+
+# Compiled build results
+out/
+build/
+
+# Intellij-specific files
+*.iml
+.idea/workspace.xml
+.idea/gradle.xml
+.idea/inspectionProfiles
+.idea/modules.xml
+.idea/vcs.xml
+.idea/misc.xml
+.idea/uiDesigner.xml
+.idea/.name
+.idea/encodings.xml
+.idea/dictionaries
+.idea/jsLibraryMappings.xml
+
+# Eclipse-specific files
+.project
+.classpath
+
+# Generated files
+*.log
+
+# Local configuration file
+application.properties
+
+# Mac OS X files
+.DS_Store
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
