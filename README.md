@@ -66,6 +66,8 @@ You have 2 options
 1. `extensions` folder where the plugin will be available without the restart.
 2. in `lib` folder you need to restart.
 
+> Note - In both cases I had to restart the server. 
+
 once the deployment is done your processor will be available in the processor section.
 
 ## To add log for your custom processors

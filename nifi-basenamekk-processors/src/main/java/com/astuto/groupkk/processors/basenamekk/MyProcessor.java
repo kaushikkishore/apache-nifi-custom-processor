@@ -49,7 +49,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Tags({"example", "astuto"})
+@Tags({"example", "some","tags","nifi","custom","processor"})
 @CapabilityDescription("A custom processor to experiment with the controllers. How to access that. ")
 @SeeAlso({})
 @ReadsAttributes({@ReadsAttribute(attribute="", description="")})
